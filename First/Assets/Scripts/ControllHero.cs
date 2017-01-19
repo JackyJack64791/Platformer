@@ -48,7 +48,7 @@ public class ControllHero : MonoBehaviour
             
             if (touch.phase!=TouchPhase.Began && touch.phase == TouchPhase.Stationary)
             {
-                
+                animationController.SetBool("PlayerRun", true);
                 if (touch.position.x <= Display.main.systemWidth / 2)
                 {
                     if (Mathf.Abs(rb.velocity.x) < maxSpeedHorizontal)
@@ -78,6 +78,7 @@ public class ControllHero : MonoBehaviour
             if (touch.phase == TouchPhase.Ended)
             {
                 rb.velocity = new Vector2(0f, rb.velocity.y);
+                animationController.SetBool("PlayerRun", false);
             }
         }
 

@@ -31,14 +31,17 @@ public class ControllHeroTest : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A))
         {
+            
             if (Mathf.Abs(rb.velocity.x) < maxSpeedHorizontal)
                 rb.AddForce(new Vector2(-50f, 0f));
+            
             //Rotate hero to moving side
             if (transformHero.rotation.eulerAngles.y == 180f)
                 transformHero.Rotate(new Vector3(0, 180f, 0));
         }
         if (Input.GetKey(KeyCode.D))
         {
+            
             if (Mathf.Abs(rb.velocity.x) < maxSpeedHorizontal)
                 rb.AddForce(new Vector2(50f, 0f));
             //Rotate hero to moving side
@@ -53,6 +56,14 @@ public class ControllHeroTest : MonoBehaviour
         if (rb.velocity.y == 0)
         {
             animationController.SetBool("PlayerFall", false);
+        }
+        if (rb.velocity.x == 0)
+        {
+            animationController.SetBool("PlayerRun", false);
+        }
+        if (rb.velocity.x != 0)
+        {
+            animationController.SetBool("PlayerRun", true);
         }
         //var touch = Input.GetTouch(0);
         ////Moving hero in different sides
