@@ -27,14 +27,12 @@ public class ControllHeroTest : MonoBehaviour
     private void FixedUpdate()
     {
         grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Water"));
-       
-    }
-    
-    // Update is called once per frame
-    void Update()
-    {
 
-       
+        if (Input.GetKey(KeyCode.Space) && grounded)
+        {
+            rb.AddForce(Vector2.up * maxSpeedUp);
+        }
+
         if (Input.GetKey(KeyCode.A))
         {
             
@@ -110,8 +108,18 @@ public class ControllHeroTest : MonoBehaviour
         //        rb.velocity = new Vector2(0f, rb.velocity.y);
         //    }
         //}
+    }
 
-        
+    private void Update()
+    {
+        if (!grounded)
+        {
+            animationController.SetBool("PlayerFall", true);
+        }
+        else
+        {
+            animationController.SetBool("PlayerFall", false);
+        }
     }
 
 }
