@@ -10,25 +10,31 @@ public class ControllHeroTest : MonoBehaviour
     public float maxSpeedHorizontal;
     private Transform transformHero;
     private Animator animationController;
+    public bool grounded;
+    public Transform groundCheck;
+    
    
     // Use this for initialization
     void Start()
     {
+       
         animationController = GetComponentInChildren<Animator>();
         transformHero = GetComponent<Transform>();
         rb = GetComponent<Rigidbody2D>();
-    }
 
+
+    }
+    private void FixedUpdate()
+    {
+        grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Water"));
+       
+    }
+    
     // Update is called once per frame
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Space) && rb.velocity.y == 0)
-        {
-            //rb.AddForce(new Vector2(0, 1500f));
-            rb.AddForce(Vector2.up * maxSpeedUp);
-        }
-
+       
         if (Input.GetKey(KeyCode.A))
         {
             

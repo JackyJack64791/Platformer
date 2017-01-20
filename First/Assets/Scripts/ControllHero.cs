@@ -10,6 +10,9 @@ public class ControllHero : MonoBehaviour
     public float maxSpeedHorizontal;
     private Transform transformHero;
     private Animator animationController;
+    public Transform groundCheck;
+    public bool grounded;
+    
    
     // Use this for initialization
     void Start()
@@ -18,35 +21,19 @@ public class ControllHero : MonoBehaviour
         transformHero = GetComponent<Transform>();
         rb = GetComponent<Rigidbody2D>();
     }
-
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
+        //Check on ground or not
+        grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Water"));
+        //Movement control
         
-        if (Input.GetKey(KeyCode.Space))
-        {
-            rb.AddForce(new Vector2(0, 100f));
-        }
-
-        if (Input.GetKey(KeyCode.W))
-        {
-          
-        }
-        // Animation state machine control
-        if (rb.velocity.y != 0)
-        {
-            animationController.SetBool("PlayerFall", true);
-        }
-        if (rb.velocity.y == 0)
-        {
-            animationController.SetBool("PlayerFall", false);
-        }
-        var touch = Input.GetTouch(0);
+        var touchCount = Input.touches.Length;
+        
         //Moving hero in different sides
-        if (Input.touchCount == 1)
+        if (touchCount == 1)
         {
-            
-            if (touch.phase!=TouchPhase.Began && touch.phase == TouchPhase.Stationary)
+            var touch = Input.GetTouch(0);
+            if (touch.phase != TouchPhase.Began && touch.phase == TouchPhase.Stationary)
             {
                 animationController.SetBool("PlayerRun", true);
                 if (touch.position.x <= Display.main.systemWidth / 2)
@@ -67,11 +54,11 @@ public class ControllHero : MonoBehaviour
                 }
             }
             //Swipe
-            if (touch.phase != TouchPhase.Ended&& touch.phase == TouchPhase.Moved )
+            if (touch.phase != TouchPhase.Ended && touch.phase == TouchPhase.Moved && grounded)
             {
-                if (touch.deltaPosition.y > 0 && Mathf.Abs(touch.deltaPosition.x)<10 && touch.deltaPosition.magnitude>7 && rb.velocity.y==0)
+                if (touch.deltaPosition.y > 0 && Mathf.Abs(touch.deltaPosition.x) < 10 && touch.deltaPosition.magnitude > 7)
                 {
-                    rb.AddForce(new Vector2(0f, 1000f));
+                    rb.AddForce(Vector2.up * maxSpeedUp);
                 }
             }
             //Stop hero event
@@ -81,6 +68,32 @@ public class ControllHero : MonoBehaviour
                 animationController.SetBool("PlayerRun", false);
             }
         }
+        else
+        {
+            var touch = Input.GetTouch(0);
+            var touch2 = Input.GetTouch(1);
+
+        }
+       
+    }
+    // Update is called once per frame
+    void Update()
+    {
+
+
+        // Animation state machine control
+        if (!grounded)
+        {
+            animationController.SetBool("PlayerFall", true);
+        }
+        else
+        {
+            animationController.SetBool("PlayerFall", false);
+        }
+        
+       
+        
+      
 
         
     }
