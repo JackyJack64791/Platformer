@@ -5,15 +5,15 @@ using UnityEngine;
 public class ControllHero : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private float move;
     public float maxSpeedUp;
     public float maxSpeedHorizontal;
     private Transform transformHero;
     private Animator animationController;
     public Transform groundCheck;
     public bool grounded;
-    
-   
+    public bool jump;
+    public bool move;
+
     // Use this for initialization
     void Start()
     {
@@ -23,20 +23,36 @@ public class ControllHero : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        //Check on ground or not
-        grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Water"));
-        //Movement control
-        
-        var touchCount = Input.touches.Length;
-        
-        //Moving hero in different sides
-        if (touchCount == 1)
+        //Movement
+        if (jump)
         {
-            var touch = Input.GetTouch(0);
-            if (touch.phase != TouchPhase.Began && touch.phase == TouchPhase.Stationary)
+            jump = false;
+            rb.AddForce(Vector2.up * maxSpeedUp);
+        }
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        foreach (var touch in Input.touches)
+        {
+            var touchSpeed=touch.deltaPosition.magnitude / touch.deltaTime;
+            //Swipe
+            if (touch.phase != TouchPhase.Ended && touch.phase == TouchPhase.Moved && rb.velocity.y == 0 )
             {
+                if (touch.deltaPosition.y > 0 && Mathf.Abs(touch.deltaPosition.x) < 10 && touch.deltaPosition.magnitude > 7 && !jump)
+                {
+                    
+                    jump = true;
+                    
+                }
+            }
+
+            //Moving hero in different sides
+            if (touch.phase != TouchPhase.Began && touch.phase == TouchPhase.Stationary && touch.fingerId == 0 && touch.deltaPosition.magnitude==0)
+            {
+                
                 animationController.SetBool("PlayerRun", true);
-                if (touch.position.x <= Display.main.systemWidth / 2)
+                if (touch.position.x <= Display.main.systemWidth / 2 )
                 {
                     if (Mathf.Abs(rb.velocity.x) < maxSpeedHorizontal)
                         rb.AddForce(new Vector2(-50f, 0f));
@@ -53,36 +69,18 @@ public class ControllHero : MonoBehaviour
                         transformHero.Rotate(new Vector3(0, -180f, 0));
                 }
             }
-            //Swipe
-            if (touch.phase != TouchPhase.Ended && touch.phase == TouchPhase.Moved && grounded)
-            {
-                if (touch.deltaPosition.y > 0 && Mathf.Abs(touch.deltaPosition.x) < 10 && touch.deltaPosition.magnitude > 7)
-                {
-                    rb.AddForce(Vector2.up * maxSpeedUp);
-                }
-            }
+           
             //Stop hero event
-            if (touch.phase == TouchPhase.Ended)
+            if (touch.phase == TouchPhase.Ended && touch.fingerId == 0)
             {
+                Debug.Log("sTOP!");
                 rb.velocity = new Vector2(0f, rb.velocity.y);
                 animationController.SetBool("PlayerRun", false);
             }
         }
-        else
-        {
-            var touch = Input.GetTouch(0);
-            var touch2 = Input.GetTouch(1);
-
-        }
-       
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
 
         // Animation state machine control
-        if (!grounded)
+        if (rb.velocity.y != 0)
         {
             animationController.SetBool("PlayerFall", true);
         }
@@ -90,12 +88,5 @@ public class ControllHero : MonoBehaviour
         {
             animationController.SetBool("PlayerFall", false);
         }
-        
-       
-        
-      
-
-        
     }
-
 }
