@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ControllHero : MonoBehaviour
 {
@@ -9,10 +10,13 @@ public class ControllHero : MonoBehaviour
     public float maxSpeedHorizontal;
     private Transform transformHero;
     private Animator animationController;
+
     public Transform groundCheck;
     public bool grounded;
     public bool jump;
     public bool move;
+    public int coins;
+    public Text score;
 
     // Use this for initialization
     void Start()
@@ -21,6 +25,17 @@ public class ControllHero : MonoBehaviour
         transformHero = GetComponent<Transform>();
         rb = GetComponent<Rigidbody2D>();
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Coin"))
+        {
+            Destroy(collision.gameObject);
+            coins++;
+            score.text = coins.ToString();
+        }
+    }
+
     private void FixedUpdate()
     {
         //Movement
