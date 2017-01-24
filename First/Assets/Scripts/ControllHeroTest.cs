@@ -9,13 +9,16 @@ public class ControllHeroTest : MonoBehaviour
     private float move;
     public float maxSpeedUp;
     public float maxSpeedHorizontal;
+    private AudioSource stepsSound;
     private Transform transformHero;
     private Animator animationController;
+    private float timer;
 
     public bool grounded;
     public Transform groundCheck;
     public int coins;
     public Text score;
+    public float stepFrequency;
     
    
     // Use this for initialization
@@ -25,11 +28,11 @@ public class ControllHeroTest : MonoBehaviour
         score.text = coins.ToString();
         animationController = GetComponentInChildren<Animator>();
         transformHero = GetComponent<Transform>();
+        stepsSound = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
 
 
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
             if (collision.gameObject.CompareTag("Coin"))
@@ -52,17 +55,22 @@ public class ControllHeroTest : MonoBehaviour
         {
             
             if (Mathf.Abs(rb.velocity.x) < maxSpeedHorizontal)
+            {
                 rb.AddForce(new Vector2(-50f, 0f));
-            
+                Steps();
+            }
             //Rotate hero to moving side
             if (transformHero.rotation.eulerAngles.y == 180f)
                 transformHero.Rotate(new Vector3(0, 180f, 0));
         }
         if (Input.GetKey(KeyCode.D))
         {
-            
+
             if (Mathf.Abs(rb.velocity.x) < maxSpeedHorizontal)
+            {
                 rb.AddForce(new Vector2(50f, 0f));
+                Steps();
+            }
             //Rotate hero to moving side
             if (transformHero.rotation.eulerAngles.y == 0)
                 transformHero.Rotate(new Vector3(0, -180f, 0));
@@ -137,4 +145,13 @@ public class ControllHeroTest : MonoBehaviour
         }
     }
 
+    private void Steps()
+    {
+        timer += Time.deltaTime;
+        if(timer > stepFrequency && grounded)
+        {
+            stepsSound.Play();
+            timer = 0;
+        }
+    }
 }

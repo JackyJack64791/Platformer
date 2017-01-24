@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Hero : MonoBehaviour {
@@ -40,8 +41,8 @@ public class Hero : MonoBehaviour {
 
     void Death()
     {
-        Debug.Log("Die, motherfucker, die");     
-        Application.LoadLevel(Application.loadedLevel);
-        
+        var sceneName = SceneManager.GetActiveScene().name;
+        Debug.Log("Die, motherfucker, die");
+        SceneManager.LoadScene(sceneName);        
     }
 }

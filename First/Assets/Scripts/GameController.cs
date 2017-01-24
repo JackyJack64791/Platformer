@@ -1,16 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
     public GameObject pause;
+    private AudioSource background;
 
     private bool paused = false;
 
     private void Start()
     {
         pause.SetActive(false);
+        background = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -30,11 +33,13 @@ public class GameController : MonoBehaviour
     public void PauseButton()
     {
         paused = true;
+        background.Pause();
     }
 
     public void BackButton()
     {
         paused = false;
+        background.UnPause();
     }
 
     public void SettingsButton()
@@ -44,7 +49,9 @@ public class GameController : MonoBehaviour
 
     public void ExitButton()
     {
-        Application.Quit();
+        Time.timeScale = 1;
+        paused = false;
+        SceneManager.LoadScene("MainMenu");
         Debug.Log("Poshel nahui");
     }
 }
